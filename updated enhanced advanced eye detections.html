@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<link rel="manifest" href="/my-eye-app/manifest.json">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -8,16 +8,13 @@
     <!-- ==========================================
     PWA / Android Requirements
     ========================================== -->
-    <!-- Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkV5ZURpYWdub3NlIC0gQUkgRXllIERpc2Vhc2UgRGV0ZWN0aW9uIiwKICAic2hvcnRfbmFtZSI6ICJFeWVEaWFnbm9zZSIsCiAgImRlc2NyaXB0aW9uIjogIkFJLXBvd2VyZWQgZXllIGRpc2Vhc2Ugc2NyZWVuaW5nIHRvb2wgdGhhdCBkZXRlY3RzIGNhdGFyYWN0cywgZ2xhdWNvbWEsIGRpYWJldGljIHJldGlub3BhdGh5LCBhbmQgb3RoZXIgZXllIGNvbmRpdGlvbnMiLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiMxZTVhOGEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdib3g9JzAgMCAxMDAgMTAwJz48dGV4dCB5PScuOWVtJyBmb250LXNpemU9JzkwJz7vvI08L3RleHQ+PC9zdmc+IiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
-    
-    <!-- Meta tags for mobile -->
-    <meta name="description" content="AI-powered eye disease screening tool that detects cataracts, glaucoma, diabetic retinopathy, and other eye conditions using TensorFlow.js">
+    <link rel="manifest" href="/my-eye-app/manifest.json">
     <meta name="theme-color" content="#1e5a8a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="EyeDiagnose">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="AI-powered eye disease screening tool that detects cataracts, glaucoma, diabetic retinopathy, and other eye conditions using TensorFlow.js">
     
     <!-- TensorFlow.js -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js">
@@ -853,61 +850,15 @@
         </div>
     </div>
 
-    <!-- Service Worker Registration -->
+    <!-- ==========================================
+    SERVICE WORKER REGISTRATION
+    ========================================== -->
     <script>
-        // ==============================================
-        // SERVICE WORKER REGISTRATION (For PWA)
-        // ==============================================
+        // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
-            // Use a base64 encoded service worker to avoid external file
-            const swCode = `
-                const CACHE_NAME = 'eyediagnose-v1';
-                const urlsToCache = ['/my-eye-app/', '/my-eye-app/index.html'];
-
-                self.addEventListener('install', (event) => {
-                    event.waitUntil(
-                        caches.open(CACHE_NAME)
-                            .then((cache) => {
-                                console.log('Opened cache');
-                                return cache.addAll(urlsToCache);
-                            })
-                    );
-                });
-
-                self.addEventListener('activate', (event) => {
-                    const cacheWhitelist = [CACHE_NAME];
-                    event.waitUntil(
-                        caches.keys().then((cacheNames) => {
-                            return Promise.all(
-                                cacheNames.map((cacheName) => {
-                                    if (cacheWhitelist.indexOf(cacheName) === -1) {
-                                        return caches.delete(cacheName);
-                                    }
-                                })
-                            );
-                        })
-                    );
-                });
-
-                self.addEventListener('fetch', (event) => {
-                    event.respondWith(
-                        caches.match(event.request)
-                            .then((response) => {
-                                if (response) {
-                                    return response;
-                                }
-                                return fetch(event.request);
-                            })
-                    );
-                });
-            `;
-
-            // Register service worker from blob URL
-            const blob = new Blob([swCode], { type: 'application/javascript' });
-            const swUrl = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(swUrl, { scope: '/' })
-                .then(() => console.log('✅ Service Worker registered'))
-                .catch(() => console.log('⚠️ Service Worker registration failed'));
+            navigator.serviceWorker.register('/my-eye-app/sw.js')
+                .then(() => console.log('✅ Service Worker registered successfully'))
+                .catch((err) => console.log('⚠️ Service Worker registration failed:', err));
         }
 
         // ==============================================
